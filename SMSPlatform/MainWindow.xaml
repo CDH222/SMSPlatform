@@ -1,0 +1,111 @@
+﻿<Window x:Class="SMSPlatform.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+        Title="太原工业学院短信平台" Height="600" Width="1100" Icon="images/sms.ico" WindowStartupLocation="CenterScreen" Foreground="{x:Null}" UseLayoutRounding="True" Loaded="Window_Loaded" Closing="Window_Closing">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="74"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Image Grid.Row="0" Source="images/top.png" Stretch="UniformToFill"></Image>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Background="#314057">
+                <Expander IsExpanded="True">
+                    <Expander.Header>
+                        <Grid Height="35">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="&#xe6ce;" FontSize="15" Style="{StaticResource FIcon}" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                            <TextBlock Grid.Column="1" Text="短信管理" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Expander.Header>
+                    <Expander.Content>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="30"/>
+                                <RowDefinition Height="30"/>
+                                <RowDefinition Height="30"/>
+                            </Grid.RowDefinitions>
+
+                            <Button Grid.Row="0" Background="#314057" BorderBrush="{x:Null}" Click="btnFestivalGreetingsSMS_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xe69f;" FontSize="22" Style="{StaticResource FIcon}"/>
+                                    <TextBlock Margin="10,0,0,0" Name="FestivalGreetingsSMS">节日祝福</TextBlock>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Grid.Row="1" Background="#314057" BorderBrush="{x:Null}" Click="btnNoticeSMS_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xe651;" FontSize="23" Style="{StaticResource FIcon}"/>
+                                    <TextBlock Margin="10,0,0,0" Name="NoticeSMS">开会通知</TextBlock>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Grid.Row="2" Background="#314057" BorderBrush="{x:Null}" Click="btnBirthdayBlessingSMS_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xe6af;" FontSize="20" Style="{StaticResource FIcon}"/>
+                                    <TextBlock Margin="10,0,0,0" Name="BirthdayBlessingSMS">生日祝福</TextBlock>
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                    </Expander.Content>
+                </Expander>
+                <Expander>
+                    <Expander.Header>
+                        <Grid Height="35">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="&#xe656;" FontSize="25" Style="{StaticResource FIcon}" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                            <TextBlock Grid.Column="1" Text="其他管理" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Expander.Header>
+                    <Expander.Content>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="30"/>
+                                <RowDefinition Height="30"/>
+                                <RowDefinition Height="30"/>
+                            </Grid.RowDefinitions>
+                            <Button Grid.Row="0" Background="#314057" BorderBrush="{x:Null}" Click="btnTemplateManager_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xe65a;" FontSize="20" Style="{StaticResource FIcon}"/>
+                                    <TextBlock Margin="10,0,0,0" Name="TemplateManager">模板管理</TextBlock>
+                                </StackPanel>
+                            </Button>
+                            <Button Grid.Row="1" Background="#314057" BorderBrush="{x:Null}" Click="btnImportData_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xe604;" FontSize="20" Style="{StaticResource FIcon}"/>
+                                    <TextBlock Margin="10,0,0,0" Name="ImportData">信息管理</TextBlock>
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                    </Expander.Content>
+                </Expander>
+            </StackPanel>
+            <Grid Grid.Column="1" Background="#F0F0F0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="30"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
+                <Grid Name="grid" Grid.Row="0" Grid.Column="1">
+                    
+                </Grid>
+                <Grid Grid.Column="1" Grid.Row="1" Background="#FFFFFF" Name="mainShow"></Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

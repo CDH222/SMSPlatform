@@ -1,0 +1,56 @@
+﻿<UserControl x:Class="SMSPlatform.usercontrol.TemplateManager"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" Loaded="UserControl_Loaded">
+    <Grid>
+        <TabControl>
+            <TabItem Header="模板修改" FontSize="14">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="120"/>
+                        <RowDefinition Height="100"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock VerticalAlignment="Center">模板ID：</TextBlock>
+                            <ComboBox Width="110" Height="25" Name="cbtpl_id" SelectionChanged="cbtpl_id_SelectionChanged"></ComboBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="80,0,0,0">
+                            <TextBlock VerticalAlignment="Center">模板类型：</TextBlock>
+                            <ComboBox Width="110" Height="25" Name="cbtpl_name" HorizontalContentAlignment="Center">
+                                <ComboBoxItem Content="--请选择--" IsSelected="True"/>
+                                <ComboBoxItem Content="开会通知"/>
+                                <ComboBoxItem Content="节日祝福"/>
+                                <ComboBoxItem Content="生日祝福"/>
+                            </ComboBox>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Grid.Row="2">
+                        <TextBlock VerticalAlignment="Center">模板内容：</TextBlock>
+                        <TextBox Margin="50,0,50,50" FontSize="14" Name="txtContent" IsEnabled="False" TextWrapping="Wrap" Height="90"></TextBox>
+                    </StackPanel>
+                    <Button Grid.Row="4" Width="80" Height="30" BorderBrush="{x:Null}" Content="修改" VerticalAlignment="Top" Name="btnUpdate" Click="btnUpdate_Click"></Button>
+                </Grid>
+            </TabItem>
+            <TabItem Header="模板添加" FontSize="14">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="110"/>
+                        <RowDefinition Height="100"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="添加模板内容时，变量名请以中文命名，如#节日#。"></TextBlock>
+                    <StackPanel Grid.Row="1">
+                        <TextBlock VerticalAlignment="Center">模板内容：</TextBlock>
+                        <TextBox Margin="50,0,50,50" FontSize="14" Name="txtAddContent" TextWrapping="Wrap" Height="80"></TextBox>
+                    </StackPanel>
+                    <Button Grid.Row="3" Width="80" Height="30" BorderBrush="{x:Null}" Content="添加" VerticalAlignment="Top" Click="btnAdd_Click"></Button>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>
