@@ -43,10 +43,6 @@ namespace SMSPlatform.usercontrol
         /// 最大页数
         /// </summary>
         private int MaxIndex = 1;
-        /// <summary>
-        /// 一共多少条
-        /// </summary>
-        private int allNum = 0;
 
         /// <summary>
         /// 初始化数据
@@ -75,7 +71,7 @@ namespace SMSPlatform.usercontrol
             {
                 txtCurrentPage.Text = pIndex.ToString();
                 TotalCount.Text = MaxIndex + "页";
-                pageSize.Text = allNum.ToString();
+                pageSize.Text = pageNum.ToString();
                 DataTable tmpTable = new DataTable();
                 tmpTable = this._dt.Clone();
                 int first = this.pageNum * (this.pIndex - 1);
@@ -142,7 +138,6 @@ namespace SMSPlatform.usercontrol
         {
             //多少页
             MaxIndex = _dt.Rows.Count / pageNum + 1;
-            allNum = _dt.Rows.Count;
         }
 
         private void btnFirst_Click(object sender, RoutedEventArgs e)

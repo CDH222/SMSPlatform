@@ -1,4 +1,5 @@
 ﻿using SMSPlatform.common;
+using SMSPlatform.Model;
 using System;
 using System.Collections.Generic;
 using System.Data.OleDb;
@@ -16,7 +17,7 @@ namespace SMSPlatform.usercontrol
 {
     public class CommonControl
     {
-        Brush brush = new SolidColorBrush(Color.FromRgb(0, 0, 255));
+        Brush brush = new SolidColorBrush(Color.FromRgb(0, 0, 0));
         Thickness thick1 = new Thickness(35, 0, 35, 0);
         Thickness thick2 = new Thickness(0, 20, 0, 0);
         Thickness thick3 = new Thickness(0, 0, 30, 0);
@@ -24,7 +25,14 @@ namespace SMSPlatform.usercontrol
         Thickness thick5 = new Thickness(35, 20, 35, 0);
         int i = 1;
 
-        public StackPanel SetExpanderHeader(string txtHeader)
+        /// <summary>
+        /// 设置ExpanderHeader
+        /// </summary>
+        /// <param name="txtHeader"></param>
+        /// <param name="tpl_id"></param>
+        /// <param name="isShow">是否显示已选择</param>
+        /// <returns></returns>
+        public StackPanel SetExpanderHeader(string txtHeader, bool isCheck, bool isShow)
         {
             StackPanel spHeader = new StackPanel();
             TextBlock tbHeader = new TextBlock();
@@ -34,16 +42,32 @@ namespace SMSPlatform.usercontrol
             tbHeader.FontSize = 16;
             tbHeader.Foreground = brush;
             tbHeader.VerticalAlignment = VerticalAlignment.Center;
-            spHeader.Children.Add(tbHeader);
             i++;
+            spHeader.Children.Add(tbHeader);
+            if (isShow)
+            {
+                if (isCheck)
+                {
+                    TextBlock tb = new TextBlock();
+                    tb.Text = "当前模板已选择！";
+                    tb.Margin = new Thickness(100, 0, 0, 0);
+                    tb.Foreground = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+                    spHeader.Children.Add(tb);
+                }
+            }
             return spHeader;
         }
-        public Grid SetExpanderContent(OleDbDataReader rdr,bool isShow)
+        /// <summary>
+        /// 设置ExpanderContent
+        /// </summary>
+        /// <param name="tpl_id"></param>
+        /// <param name="isShow">是否显示变量输入框</param>
+        /// <returns></returns>
+        public Grid SetExpanderContent(string tpl_id,bool isShow)
         {
-            string tpl_id = rdr["tpl_id"].ToString();
             TextBlock tbID = new TextBlock();
             TextBox txt = new TextBox();
-            TextBox txtPreview = new TextBox();
+            Label lbContent = new Label();
             Grid gdContent = new Grid();
             WrapPanel wp = new WrapPanel();
             Grid gdtxt = new Grid();
@@ -60,21 +84,17 @@ namespace SMSPlatform.usercontrol
             gdContent.RowDefinitions.Add(row4);
 
             string content = GetTplContent(tpl_id);
+
+            lbContent.Content = content;
+            lbContent.Visibility = Visibility.Collapsed;
+
             txt.Text = content;
-            txt.Height = 90;
+            txt.Height = 100;
             txt.FontSize = 16;
             txt.IsReadOnly = true;
             txt.Margin = thick1;
             txt.TextWrapping = TextWrapping.Wrap;
             txt.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
-
-            txtPreview.Height = 90;
-            txtPreview.FontSize = 16;
-            txtPreview.IsReadOnly = true;
-            txtPreview.Margin = thick5;
-            txtPreview.TextWrapping = TextWrapping.Wrap;
-            txtPreview.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
-            txtPreview.Visibility = Visibility.Collapsed;
 
             if (isShow)
             {
@@ -112,26 +132,29 @@ namespace SMSPlatform.usercontrol
             }
 
             tbID.Text = tpl_id;
-            tbID.Visibility = Visibility.Hidden;
+            tbID.Visibility = Visibility.Collapsed;
 
+            gdContent.Children.Add(lbContent);
             gdContent.Children.Add(txt);
-            gdContent.Children.Add(txtPreview);
             gdContent.Children.Add(wp);
             gdContent.Children.Add(tbID);
 
-            Grid.SetRow(txt, 0);
-            Grid.SetRow(txtPreview, 1);
+            Grid.SetRow(lbContent, 0);
+            Grid.SetRow(txt, 1);
             Grid.SetRow(wp, 2);
             Grid.SetRow(tbID, 4);
             return gdContent;
         }
+        /// <summary>
+        /// 获取替换后的内容
+        /// </summary>
         public void GetTpl_text(RoutedEventArgs e, out int textNum, out string tpl_text)
         {
             textNum = 0;
             IList<string> txtContent2 = new List<string>();
             TextBox tb = new TextBox();
             Button btn = e.Source as Button;
-            tpl_text = (VisualTreeHelper.GetChild(btn.Parent as Grid, 0) as TextBox).Text;
+            tpl_text = (VisualTreeHelper.GetChild(btn.Parent as Grid, 0) as Label).Content.ToString();
             WrapPanel wp = VisualTreeHelper.GetChild(btn.Parent as Grid, 2) as WrapPanel;
             foreach (StackPanel sp in wp.Children)
             {

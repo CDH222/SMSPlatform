@@ -36,18 +36,18 @@ namespace SMSPlatform.usercontrol
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            ThreadPool.QueueUserWorkItem((a) =>
-            {
-                TeacherInfo teacherInfo = new TeacherInfo();
-                OpenFileDialog fdlg = new OpenFileDialog();
-                fdlg.Title = "请选择要打开的文件";
-                fdlg.InitialDirectory = @"C:\";//默认C盘
-                fdlg.Filter = "Excel文件|*.xls;*.xlsx";
+            TeacherSQL teacherSQL = new TeacherSQL();
+            OpenFileDialog fdlg = new OpenFileDialog();
+            fdlg.Title = "请选择要打开的文件";
+            fdlg.InitialDirectory = @"C:\";//默认C盘
+            fdlg.Filter = "Excel文件|*.xls;*.xlsx";
 
-                if (fdlg.ShowDialog() == true)
+            if (fdlg.ShowDialog() == true)
+            {
+                progressBar1.Visibility = Visibility.Visible;
+                string path = fdlg.FileName;
+                ThreadPool.QueueUserWorkItem((a) =>
                 {
-                    progressBar1.Dispatcher.Invoke(() => progressBar1.Visibility = Visibility.Visible);
-                    string path = fdlg.FileName;
                     //从Excel中读取数据
                     using (FileStream fileStream = new FileStream(path, FileMode.Open, FileAccess.Read))
                     {
@@ -64,41 +64,44 @@ namespace SMSPlatform.usercontrol
                         ISheet sheet = workbook.GetSheetAt(0);
                         IRow currentRow;  //新建当前工作表行数据
                         IList<ICell> listCells = new List<ICell>(); //list中保存当前行的所有的单元格内容
-                        progressBar1.Dispatcher.Invoke(() => progressBar1.Value = 0);
                         progressBar1.Dispatcher.Invoke(() => progressBar1.Maximum = sheet.LastRowNum);
                         //遍历说有行
                         for (int r = 1; r <= sheet.LastRowNum; r++)
                         {
+                            TeacherInfo teacherInfo = new TeacherInfo();
                             //获取每一行
                             currentRow = sheet.GetRow(r);
-                            
-                            teacherInfo.WorkID = currentRow.GetCell(0).ToString();
-                            teacherInfo.RealName = currentRow.GetCell(1)== null ? "" : currentRow.GetCell(1).ToString();
-                            teacherInfo.IDNumber = currentRow.GetCell(2)== null ? "" : currentRow.GetCell(2).ToString();
-                            teacherInfo.Phone = currentRow.GetCell(3) == null ? "" : currentRow.GetCell(3).ToString();
-                            teacherInfo.Position = currentRow.GetCell(4) == null ? "" : currentRow.GetCell(4).ToString();
-                            using (OleDbDataReader reader = TeacherSQL.QueryByWorkIDandRealName(teacherInfo))
+                            teacherInfo.DepartmentName = currentRow.GetCell(0) == null ? "" : currentRow.GetCell(0).ToString();
+                            teacherInfo.WorkID = currentRow.GetCell(1).ToString();
+                            IList<TeacherInfo> lit = teacherSQL.QueryByWorkIDandRealName(teacherInfo);
+
+                            teacherInfo.RealName = currentRow.GetCell(2).ToString();
+                            teacherInfo.IDNumber = currentRow.GetCell(3) == null ? "" : currentRow.GetCell(3).ToString();
+                            teacherInfo.Phone = currentRow.GetCell(4) == null ? "" : currentRow.GetCell(4).ToString();
+                            teacherInfo.Pro_Title = currentRow.GetCell(5) == null ? "" : currentRow.GetCell(5).ToString();
+                            teacherInfo.Position = currentRow.GetCell(6) == null ? "" : currentRow.GetCell(6).ToString();
+                            if (lit.Count > 0)
                             {
-                                if (reader.HasRows)
-                                {
-                                    TeacherSQL.Update(teacherInfo);
-                                }
-                                else
-                                {
-                                    //执行sql语句
-                                    TeacherSQL.Insert(teacherInfo);
-                                }
+                                teacherSQL.Update(teacherInfo);
+                            }
+                            else
+                            {
+                                teacherSQL.Insert(teacherInfo);
                             }
                             progressBar1.Dispatcher.Invoke(() => progressBar1.Value++);
                         }
+                        Application.Current.Dispatcher.BeginInvoke((Action)(() =>
+                        {
+                            MessageBox.Show("数据导入成功！");
+                            this.Close();
+                        }));
                     }
-                    MessageBox.Show("数据导入成功！");
-                }
-                Application.Current.Dispatcher.BeginInvoke((Action)(() =>
-                {
-                    this.Close();
-                }));
-            });
+                });
+            }
+            else
+            {
+                this.Close();
+            }
         }
     }
 }

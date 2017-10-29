@@ -17,17 +17,17 @@
                         <ColumnDefinition Width="80"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal">
-                        <TextBlock Text="&#xe685;" FontSize="20" Foreground="Blue" Style="{StaticResource FIcon}" VerticalAlignment="Center"></TextBlock>
-                        <TextBlock Grid.Column="1" Text="职称" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="Blue" FontSize="14"/>
+                    <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="&#xe685;" FontSize="20" Foreground="Black" Style="{StaticResource FIcon}" VerticalAlignment="Center"></TextBlock>
+                        <TextBlock Grid.Column="1" Text="职称" Foreground="Black" VerticalAlignment="Center" Margin="10,0,0,0" FontSize="14"/>
                     </StackPanel>
-                    <StackPanel Grid.Column="1" Grid.Row="0" Name="spPro_Title" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
+                    <StackPanel Grid.Column="1" Grid.Row="0" Name="spPro_Title" VerticalAlignment="Center" Orientation="Horizontal">
                     </StackPanel>
-                    <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal">
-                        <TextBlock Text="&#xe62e;" FontSize="20" Foreground="Blue" Style="{StaticResource FIcon}" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
-                        <TextBlock Grid.Column="1" FontSize="14" Text="职位" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="Blue"/>
+                    <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="&#xe62e;" FontSize="20" Foreground="Black" Style="{StaticResource FIcon}" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                        <TextBlock Grid.Column="1" FontSize="14" Foreground="Black" Text="职位" VerticalAlignment="Center" Margin="10,0,0,0"/>
                     </StackPanel>
-                    <StackPanel Grid.Column="1" Grid.Row="1" Name="spPosition" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal"></StackPanel>
+                    <StackPanel Grid.Column="1" Grid.Row="1" Name="spPosition" VerticalAlignment="Center" Orientation="Horizontal"></StackPanel>
                 </Grid>
                 <StackPanel Name="sptpl"></StackPanel>
                 <ProgressBar Height="25" Name="progressBar1" Minimum="0" Visibility="Hidden" Style="{DynamicResource SendProgressBarStyle}" Panel.ZIndex="10"></ProgressBar>

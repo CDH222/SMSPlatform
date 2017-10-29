@@ -1,6 +1,7 @@
 ﻿using SMSPlatform.Model;
 using SMSPlatform.SQL;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
@@ -30,138 +31,103 @@ namespace SMSPlatform.usercontrol
             InitializeComponent();
         }
         TeacherInfo teacherInfo = new TeacherInfo();
+        TeacherSQL teacherSQL = new TeacherSQL();
+        DataTable table = new DataTable();
+
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            DataLoade(TeacherSQL.QueryAll_DataTable());
+            DataLoade(teacherSQL.QueryAll_DataTable());
         }
 
         private void btnQuery(object sender, RoutedEventArgs e)
         {
-            DataTable table = new DataTable();
-            try
+            IList<TeacherInfo> list = new List<TeacherInfo>();
+            
+            if (cbCondition.SelectedIndex == 0)
             {
-                if (cbCondition.SelectedIndex == 0)
-                {
-                    MessageBox.Show("请选择查询类型！");
-                    return;
-                }
-                if (cbCondition.SelectedIndex == 1)
-                {
-                    teacherInfo.WorkID = txtCondition.Text;
-                    using (OleDbDataReader reader = TeacherSQL.QueryByWorkIDandRealName(teacherInfo))
-                    {
-                        table.Load(reader);
-                        DataLoade(table);
-                    }
-                }
-                if (cbCondition.SelectedIndex == 2)
-                {
-                    teacherInfo.RealName = txtCondition.Text;
-                    using (OleDbDataReader reader = TeacherSQL.QueryByWorkIDandRealName(teacherInfo))
-                    {
-                        table.Load(reader);
-                        DataLoade(table);
-                    }
-                }
+                MessageBox.Show("请选择查询类型！","提示",MessageBoxButton.OK,MessageBoxImage.Information);
+                return;
             }
-            catch(Exception ex)
+            if (cbCondition.SelectedIndex == 1)
             {
-                throw ex;
+                teacherInfo.WorkID = txtCondition.Text;
+                list = teacherSQL.QueryByWorkIDandRealName(teacherInfo);
+                ToDataTableTow(list);
+                DataLoade(table);
+            }
+            if (cbCondition.SelectedIndex == 2)
+            {
+                teacherInfo.RealName = txtCondition.Text;
+                list = teacherSQL.QueryByWorkIDandRealName(teacherInfo);
+                ToDataTableTow(list);
+                DataLoade(table);
             }
             table.Dispose();
         }
 
         private void btnAdd(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                DataAddandUpdate dau = new DataAddandUpdate();
-                dau.Title = "数据添加";
-                Uri iconUri = new Uri("images/add.ico", UriKind.Relative);
-                dau.Icon = BitmapFrame.Create(iconUri);
-                dau.isAdd = true;
-                dau.ShowDialog();
-                DataLoade(TeacherSQL.QueryAll_DataTable());
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            DataAddandUpdate dau = new DataAddandUpdate();
+            dau.Title = "数据添加";
+            Uri iconUri = new Uri("images/add.ico", UriKind.Relative);
+            dau.Icon = BitmapFrame.Create(iconUri);
+            dau.isAdd = true;
+            dau.ShowDialog();
+            DataLoade(teacherSQL.QueryAll_DataTable());
         }
 
         private void btnUpdate(object sender, RoutedEventArgs e)
         {
-            try
+            DataRowView b = (DataRowView)grid1.SelectedItem;
+            if (b == null)
             {
-                DataRowView b = (DataRowView)grid1.SelectedItem;
-                if (b == null)
-                {
-                    MessageBox.Show("请选择数据！");
-                    return;
-                }
-                string workID = b["WorkID"].ToString();
-                DataAddandUpdate dau = new DataAddandUpdate();
-                dau.Title = "数据更新";
-                Uri iconUri = new Uri("images/Update.ico", UriKind.Relative);
-                dau.Icon = BitmapFrame.Create(iconUri);
-                dau.isAdd = false;
-                dau.Load(workID);
-                dau.ShowDialog();
-                DataLoade(TeacherSQL.QueryAll_DataTable());
+                MessageBox.Show("请选择数据！", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            string workID = b["WorkID"].ToString();
+            DataAddandUpdate dau = new DataAddandUpdate();
+            dau.Title = "数据更新";
+            Uri iconUri = new Uri("images/Update.ico", UriKind.Relative);
+            dau.Icon = BitmapFrame.Create(iconUri);
+            dau.isAdd = false;
+            dau.Load(workID);
+            dau.ShowDialog();
+            DataLoade(teacherSQL.QueryAll_DataTable());
         }
         private void btnDelete(object sender, RoutedEventArgs e)
         {
-            try
+            DataRowView b = (DataRowView)grid1.SelectedItem;
+            if (b == null)
             {
-                TeacherInfo teacherInfo = new TeacherInfo();
-                DataRowView b = (DataRowView)grid1.SelectedItem;
-                if (b == null)
-                {
-                    MessageBox.Show("请选择数据！");
-                    return;
-                }
+                MessageBox.Show("请选择数据！", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+            if (MessageBox.Show("确认删除！", "提示", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
                 string workID = b["WorkID"].ToString();
-
-                teacherInfo.WorkID = workID;
-                if (TeacherSQL.Delete(teacherInfo) > 0)
+                if (teacherSQL.Delete(workID) > 0)
                 {
-                    MessageBox.Show("删除成功！");
-                    DataLoade(TeacherSQL.QueryAll_DataTable());
+                    MessageBox.Show("删除成功！", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                    DataLoade(teacherSQL.QueryAll_DataTable());
                 }
                 else
                 {
-                    MessageBox.Show("删除失败，请重试！");
+                    MessageBox.Show("删除失败，请重试！", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
-            }
-            catch(Exception ex)
-            {
-                throw ex;
             }
         }
         private void btnInto(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                ProgressBar pb = new ProgressBar();
-                HwndSource winformWindow = HwndSource.FromDependencyObject(this) as HwndSource;
-                new WindowInteropHelper(pb) { Owner = winformWindow.Handle };
-                pb.ShowDialog();
-                DataLoade(TeacherSQL.QueryAll_DataTable());
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
+            ProgressBar pb = new ProgressBar();
+            HwndSource winformWindow = HwndSource.FromDependencyObject(this) as HwndSource;
+            new WindowInteropHelper(pb) { Owner = winformWindow.Handle };
+            pb.ShowDialog();
+            DataLoade(teacherSQL.QueryAll_DataTable());
         }
 
         private void btnRefresh(object sender, RoutedEventArgs e)
         {
-            DataLoade(TeacherSQL.QueryAll_DataTable());
+            DataLoade(teacherSQL.QueryAll_DataTable());
         }
         //加载
         public void DataLoade(DataTable table)
@@ -169,6 +135,29 @@ namespace SMSPlatform.usercontrol
             grid1.RowHeight = 25;
             grid1.ItemsSource = null;
             gridpage.ShowPages(grid1, table, 30);
+        }
+        void ToDataTableTow(IList<TeacherInfo> list)
+        {
+            table.Reset();
+            table.Columns.Add("DepartmentName");
+            table.Columns.Add("WorkID");
+            table.Columns.Add("RealName");
+            table.Columns.Add("IDNumber");
+            table.Columns.Add("Phone");
+            table.Columns.Add("Position");
+            table.Columns.Add("Pro_Title");
+            foreach (var info in list)
+            {
+                DataRow dr = table.NewRow();
+                dr["DepartmentName"] = info.DepartmentName;
+                dr["WorkID"] = info.WorkID;
+                dr["RealName"] = info.RealName;
+                dr["IDNumber"] = info.IDNumber;
+                dr["Phone"] = info.Phone;
+                dr["Position"] = info.Position;
+                dr["Pro_Title"] = info.Pro_Title;
+                table.Rows.Add(dr);
+            }
         }
     }
 }

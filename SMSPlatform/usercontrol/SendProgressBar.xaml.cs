@@ -1,4 +1,5 @@
 ﻿using SMSPlatform.common;
+using SMSPlatform.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,20 +34,20 @@ namespace SMSPlatform.usercontrol
         {
             InitializeComponent();
         }
-        public void SendSms(int maximum, IList<string> list, string tpl_text)
+        public void SendSms(IList<TeacherInfo> list, string tpl_text)
         {
             progressBar1.Value = 0;
             progressBar1.Minimum = 0;
-            progressBar1.Maximum = maximum;
+            progressBar1.Maximum = list.Count;
 
             
             ThreadPool.QueueUserWorkItem((a) =>
             {
                 //发送短信
-                foreach (string phone in list)
+                for (int i = 0; i < list.Count; i++)
                 {
                     data.Clear();
-                    data.Add("mobile", phone);
+                    data.Add("mobile", list[i].Phone);
                     data.Add("text", tpl_text);
                     result = sms.singleSend(data);
                     progressBar1.Dispatcher.Invoke(() => progressBar1.Value++);

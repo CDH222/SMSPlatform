@@ -62,7 +62,7 @@ namespace SMSPlatform
         /// </summary>
         static void App_OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            MessageBox.Show("当前应用程序遇到一些问题，该操作已经终止，请进行重试。可能原因：网络未连接！）", "意外的操作", MessageBoxButton.OK, MessageBoxImage.Information);//这里通常需要给用户一些较为友好的提示，并且后续可能的操作
+            MessageBox.Show("当前应用程序遇到一些问题，该操作已经终止，请重试。", "意外的操作", MessageBoxButton.OK, MessageBoxImage.Information);//这里通常需要给用户一些较为友好的提示，并且后续可能的操作
             e.Handled = true;//使用这一行代码告诉运行时，该异常被处理了，不再作为UnhandledException抛出了。
         }
         /// <summary>
@@ -70,7 +70,7 @@ namespace SMSPlatform
         /// </summary>
         static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            MessageBox.Show("当前应用程序遇到一些问题，该操作已经终止，请进行重试。（可能原因：网络未连接！）", "意外的操作", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("当前应用程序遇到一些问题，该操作已经终止，请重试。" , "意外的操作", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

@@ -34,45 +34,45 @@ namespace SMSPlatform.usercontrol
         {
             LoadData();
         }
-        TplInfo tplInfo = new TplInfo();
+
         CommonControl commonControl = new CommonControl();
+        TeacherSQL teacherSQL = new TeacherSQL();
+        TplSQL tplSQL = new TplSQL();
+        
         private void LoadData()
         {
             Grid grid = new Grid();
             grid.HorizontalAlignment = HorizontalAlignment.Center;
-            tplInfo.Tpl_name = 2;
-            using (OleDbDataReader rdr = TplSQL.QueryByTpl_name(tplInfo))
+            IList<TplInfo> list = tplSQL.QueryByTpl_name("节日祝福");
+            if (list.Count > 0)
             {
-                if (rdr.HasRows)
+                for (int i = 0; i < list.Count; i++)
                 {
-                    while (rdr.Read())
-                    {
-                        Expander epd = new Expander();
-                        epd.Header = commonControl.SetExpanderHeader("节日祝福模板");
-                        Button btnSend = new Button();
-                        Button btnPreview = new Button();
+                    Expander epd = new Expander();
+                    epd.Header = commonControl.SetExpanderHeader("节日祝福模板", list[i].IsCheck, false);
+                    Button btnSend = new Button();
+                    Button btnPreview = new Button();
 
-                        btnPreview.Height = 30;
-                        btnPreview.Width = 80;
-                        btnPreview.Content = "预览";
-                        btnPreview.Click += btnPreview_Click;
-                        btnPreview.Margin = new Thickness(0, 20, 200, 0);
+                    btnPreview.Height = 30;
+                    btnPreview.Width = 80;
+                    btnPreview.Content = "预览";
+                    btnPreview.Click += btnPreview_Click;
+                    btnPreview.Margin = new Thickness(0, 20, 200, 0);
 
-                        btnSend.Height = 30;
-                        btnSend.Width = 80;
-                        btnSend.Content = "发送";
-                        btnSend.Click += btnSend_Click;
-                        btnSend.Margin = new Thickness(200, 20, 0, 0);
+                    btnSend.Height = 30;
+                    btnSend.Width = 80;
+                    btnSend.Content = "发送";
+                    btnSend.Click += btnSend_Click;
+                    btnSend.Margin = new Thickness(200, 20, 0, 0);
 
-                        grid = commonControl.SetExpanderContent(rdr, true);
-                        grid.Children.Add(btnPreview);
-                        grid.Children.Add(btnSend);
-                        Grid.SetRow(btnPreview, 3);
-                        Grid.SetRow(btnSend, 3);
-                        epd.Content = grid;
+                    grid = commonControl.SetExpanderContent(list[i].Tpl_id, true);
+                    grid.Children.Add(btnPreview);
+                    grid.Children.Add(btnSend);
+                    Grid.SetRow(btnPreview, 3);
+                    Grid.SetRow(btnSend, 3);
+                    epd.Content = grid;
 
-                        sptpl.Children.Add(epd);
-                    }
+                    sptpl.Children.Add(epd);
                 }
             }
         }
@@ -80,51 +80,47 @@ namespace SMSPlatform.usercontrol
         void btnPreview_Click(object sender, RoutedEventArgs e)
         {
             int textNum = 0;
-            string txtPreview;
-            IList<string> list = new List<string>();
-            commonControl.GetTpl_text(e, out textNum, out txtPreview);
+            string tpl_text = null;
+            commonControl.GetTpl_text(e, out textNum, out tpl_text);
             if (textNum > 0)
             {
-                MessageBox.Show("请填写相关内容！");
+                MessageBox.Show("请填写相关内容！", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
             Button btnPreview = e.Source as Button;
-            TextBox tbPreview = VisualTreeHelper.GetChild(btnPreview.Parent as Grid, 1) as TextBox;
-            tbPreview.Text = "预览：" + txtPreview;
-            tbPreview.Visibility = Visibility.Visible;
+            TextBox tbContent = VisualTreeHelper.GetChild(btnPreview.Parent as Grid, 1) as TextBox;
+            tbContent.Text = tpl_text;
         }
 
         void btnSend_Click(object sender, RoutedEventArgs e)
         {
             int textNum = 0;
             string tpl_text;
-            IList<string> list = new List<string>();
             commonControl.GetTpl_text(e, out textNum, out tpl_text);
             if (tpl_text.IndexOf("\r\n\r\n提示：") > 0)
             {
-                MessageBox.Show("当前无法发送！");
+                MessageBox.Show("当前无法发送！", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
             if (textNum > 0)
             {
-                MessageBox.Show("请填写相关内容！");
+                MessageBox.Show("请填写相关内容！", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
-            using (OleDbDataReader reader = TeacherSQL.QueryAll())
+            IList<TeacherInfo> list = teacherSQL.QueryAll();
+            if (list.Count > 0)
             {
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        list.Add(reader["Phone"].ToString());
-                    }
-                }
+                SendProgressBar spb = new SendProgressBar();
+                HwndSource winformWindow = HwndSource.FromDependencyObject(this) as HwndSource;
+                new WindowInteropHelper(spb) { Owner = winformWindow.Handle };
+                spb.SendSms(list, tpl_text);
+                spb.ShowDialog();
             }
-            SendProgressBar spb = new SendProgressBar();
-            HwndSource winformWindow = HwndSource.FromDependencyObject(this) as HwndSource;
-            new WindowInteropHelper(spb) { Owner = winformWindow.Handle };
-            //spb.SendSms(list.Count, list, tpl_text);
-            //spb.ShowDialog();
+            else
+            {
+                MessageBox.Show("无相关数据！","提示",MessageBoxButton.OK,MessageBoxImage.Information);
+            }
+
         }
     }
 }

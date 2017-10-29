@@ -28,6 +28,7 @@ namespace SMSPlatform.usercontrol
             InitializeComponent();
         }
         TeacherInfo teacherInfo = new TeacherInfo();
+        TeacherSQL teacherSQL = new TeacherSQL();
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             if (isAdd)
@@ -38,50 +39,70 @@ namespace SMSPlatform.usercontrol
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             TeacherInfo teacherInfo = new TeacherInfo();
+            teacherInfo.WorkID = txtWorkID.Text;
+            IList<TeacherInfo> lit = teacherSQL.QueryByWorkIDandRealName(teacherInfo);
             teacherInfo.RealName = txtRealName.Text;
             teacherInfo.IDNumber = txtIDNumber.Text;
             teacherInfo.Phone = txtPhone.Text;
+            teacherInfo.DepartmentName = txtDepartmentName.Text;
             teacherInfo.Position = txtPosition.Text;
-            teacherInfo.WorkID = txtWorkID.Text;
             teacherInfo.Pro_Title = txtPro_Title.Text;
-            if (isAdd)
+            if (txtWorkID.Text != "" && txtRealName.Text != "")
             {
-                if (TeacherSQL.Insert(teacherInfo) > 0)
+                if (isAdd)
                 {
-                    MessageBox.Show("添加成功！");
+                    if (lit.Count > 0)
+                    {
+                        MessageBox.Show("信息已存在！", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                        return;
+                    }
+                    if (teacherSQL.Insert(teacherInfo) > 0)
+                    {
+                        MessageBox.Show("添加成功！", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("添加失败，请重试！", "提示", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
                 else
                 {
-                    MessageBox.Show("添加失败，请重试！");
+                    if (teacherSQL.Update(teacherInfo) > 0)
+                    {
+                        MessageBox.Show("修改成功！", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("修改失败，请重试！", "提示", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
             }
             else
             {
-                if (TeacherSQL.Update(teacherInfo) > 0)
-                {
-                    MessageBox.Show("修改成功！");
-                }
-                else
-                {
-                    MessageBox.Show("修改失败，请重试！");
-                }
+                MessageBox.Show("请输入相关内容！", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
         public void Load(string workID)
         {
             teacherInfo.WorkID = workID;
-            using (OleDbDataReader reader = TeacherSQL.QueryByWorkIDandRealName(teacherInfo))
+            IList<TeacherInfo> list = teacherSQL.QueryByWorkIDandRealName(teacherInfo);
+            if (list.Count > 0)
             {
-                if (reader.Read())
+                for (int i = 0; i < list.Count; i++)
                 {
-                    txtWorkID.Text = reader["WorkID"].ToString();
-                    txtRealName.Text = reader["RealName"].ToString();
-                    txtPhone.Text = reader["Phone"].ToString();
-                    txtIDNumber.Text = reader["IDNumber"].ToString();
-                    txtPosition.Text = reader["Position"].ToString();
-                    txtPro_Title.Text = reader["Pro_Title"].ToString();
+                    txtWorkID.Text = list[i].WorkID;
+                    txtDepartmentName.Text = list[i].DepartmentName;
+                    txtRealName.Text = list[i].RealName;
+                    txtPhone.Text = list[i].Phone;
+                    txtIDNumber.Text = list[i].IDNumber;
+                    txtPosition.Text = list[i].Position;
+                    txtPro_Title.Text = list[i].Pro_Title;
                 }
+            }
+            else
+            {
+                MessageBox.Show("无相关数据，请重试！", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
     }

@@ -29,6 +29,7 @@ namespace SMSPlatform.usercontrol
         }
         TplInfo tplInfo = new TplInfo();
         CommonControl commonControl = new CommonControl();
+        TplSQL tplSQL = new TplSQL();
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
@@ -38,52 +39,44 @@ namespace SMSPlatform.usercontrol
         private void LoadData()
         {
             Grid grid = new Grid();
-            tplInfo.Tpl_name = 3;
-            using (OleDbDataReader rdr = TplSQL.QueryByTpl_name(tplInfo))
+            IList<TplInfo> list = tplSQL.QueryByTpl_name("生日祝福");
+            if (list.Count > 0)
             {
-                if (rdr.HasRows)
+                for (int i = 0; i < list.Count; i++)
                 {
-                    while (rdr.Read())
-                    {
-                        Expander epd = new Expander();
-                        epd.Header = commonControl.SetExpanderHeader("生日祝福");
-                        Button btn = new Button();
-                        btn.Height = 30;
-                        btn.Width = 80;
-                        btn.Content = "设置";
-                        btn.Click += btnSend_Click;
-                        btn.Margin = new Thickness(0, 20, 0, 0);
-                        grid = commonControl.SetExpanderContent(rdr, false);
-                        grid.Children.Add(btn);
-                        Grid.SetRow(btn, 3);
-                        epd.Content = grid;
+                    Expander epd = new Expander();
+                    epd.Header = commonControl.SetExpanderHeader("生日祝福模板", list[i].IsCheck, true);
+                    Button btn = new Button();
+                    btn.Height = 30;
+                    btn.Width = 80;
+                    btn.Content = "选择模板";
+                    btn.Click += btnSet_Click;
+                    btn.Margin = new Thickness(0, 20, 0, 0);
+                    grid = commonControl.SetExpanderContent(list[i].Tpl_id, false);
+                    grid.Children.Add(btn);
+                    Grid.SetRow(btn, 3);
+                    epd.Content = grid;
 
-                        sptpl.Children.Add(epd);
-                    }
-                }
-            }
-            string tpl_id = Properties.Settings.Default.tpl_id;
-            TextBlock tb = new TextBlock();
-            foreach (Expander ep in sptpl.Children.OfType<Expander>())
-            {
-                StackPanel spHeader = ep.Header as StackPanel;
-                TextBlock tbID = VisualTreeHelper.GetChild(ep.Content as Grid, 3) as TextBlock;
-                if (tbID.Text == tpl_id)
-                {
-                    tb.Text = "当前模板已选择！";
-                    tb.Margin = new Thickness(100, 0, 0, 0);
-                    tb.Foreground = new SolidColorBrush(Color.FromRgb(0, 0, 255));
-                    spHeader.Children.Add(tb);
+                    sptpl.Children.Add(epd);
                 }
             }
         }
 
-        void btnSend_Click(object sender, RoutedEventArgs e)
+        void btnSet_Click(object sender, RoutedEventArgs e)
         {
             Button btn = e.Source as Button;
-            Properties.Settings.Default.tpl_id = (VisualTreeHelper.GetChild(btn.Parent as Grid, 3) as TextBlock).Text;
-            Properties.Settings.Default.Save();//使用Save方法保存更改
-            MessageBox.Show("设置成功！");
+            string tpl_text = (VisualTreeHelper.GetChild(btn.Parent as Grid, 0) as Label).Content.ToString();
+            if (tpl_text.IndexOf("\r\n\r\n提示：") > 0)
+            {
+                MessageBox.Show("当前无法选择！", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+            tplInfo.Tpl_id = (VisualTreeHelper.GetChild(btn.Parent as Grid, 3) as TextBlock).Text;
+            tplInfo.IsCheck = true;
+            if(tplSQL.Update_Bir(tplInfo)>0)
+            {
+                MessageBox.Show("选择成功！", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
     }
 }

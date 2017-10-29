@@ -22,17 +22,5 @@ namespace SMSPlatform.Properties {
                 return defaultInstance;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string tpl_id {
-            get {
-                return ((string)(this["tpl_id"]));
-            }
-            set {
-                this["tpl_id"] = value;
-            }
-        }
     }
 }

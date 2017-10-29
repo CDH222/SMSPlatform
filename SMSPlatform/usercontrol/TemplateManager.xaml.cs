@@ -31,105 +31,166 @@ namespace SMSPlatform.usercontrol
             InitializeComponent();
         }
         TplInfo tplInfo = new TplInfo();
+        TplSQL tplSQL = new TplSQL();
         TplOperator tpl = new TplOperator(YunpianConfig.GetConfig());
         Dictionary<string, string> data = new Dictionary<string, string>();
         Result result = null;
-        string index = null;
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            try
+            string tpl_id = null;
+            btnUpdate.IsEnabled = false;
+            btnUpdate_Type.IsEnabled = false;
+            btnDelete_Delete.IsEnabled = false;
+            data.Clear();
+            cbtpl_id.Items.Clear();
+            //获取模板编号
+            result = tpl.get(data);
+            for (int i = 0; i < result.data.Count; i++)
             {
-                btnUpdate.IsEnabled = false;
-                data.Clear();
-                cbtpl_id.Items.Clear();
-                //获取模板编号
-                result = tpl.get(data);
-                for (int i = 0; i < result.data.Count; i++)
+                tpl_id = result.data[i]["tpl_id"];
+                tplInfo = tplSQL.Query(tpl_id);
+                if (tplInfo.Tpl_id == null)
                 {
-                    cbtpl_id.Items.Add(result.data[i]["tpl_id"]);
+                    tplInfo.Tpl_id = tpl_id;
+                    tplInfo.Tpl_name = "";
+                    tplSQL.Insert(tplInfo);
                 }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
+                cbtpl_id.Items.Add(tpl_id);
+                cbtpl_id_Type.Items.Add(tpl_id);
+                cbtpl_id_Delete.Items.Add(tpl_id);
             }
         }
 
+        #region 模板修改
         private void cbtpl_id_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            try
+            btnUpdate.IsEnabled = true;
+            txtContent.IsEnabled = true;
+            string tpl_id = cbtpl_id.SelectedItem.ToString().Trim();
+            tplInfo = tplSQL.Query(tpl_id);
+            if (tplInfo.Tpl_name == "")
             {
-                btnUpdate.IsEnabled = true;
-                txtContent.IsEnabled = true;
-                index = cbtpl_id.SelectedItem.ToString().Trim();
-                tplInfo.Tpl_id = int.Parse(index);
-                using (OleDbDataReader rdr = TplSQL.Query(tplInfo))
-                {
-                    if (!rdr.HasRows)
-                    {
-                        cbtpl_name.SelectedIndex = 0;
-                    }
-                    else
-                    {
-                        if (rdr.Read())
-                        {
-                            cbtpl_name.SelectedIndex = int.Parse(rdr["tpl_name"].ToString());
-                        }
-                    }
-                }
-                data.Clear();
-                data.Add("tpl_id", index);
-                result = tpl.get(data);
-                string[] responseText = result.responseText.Split(',');
-                txtContent.Text = responseText[1].Split('\"')[3];
+                cbtpl_name.Text = "模板类型：无类型！";
             }
-            catch (Exception ex)
+            else
             {
-                throw ex;
+                cbtpl_name.Text = "模板类型：" + tplInfo.Tpl_name;
             }
+            data.Clear();
+            data.Add("tpl_id", tpl_id);
+            result = tpl.get(data);
+            string[] responseText = result.responseText.Split(',');
+            txtContent.Text = responseText[1].Split('\"')[3];
         }
 
         private void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
-            if (cbtpl_name.SelectedIndex == 0)
+            string tpl_id = cbtpl_id.SelectedItem.ToString().Trim();
+            string tpl_content = txtContent.Text;
+            data.Clear();
+            data.Add("tpl_id", tpl_id);
+            data.Add("tpl_content", tpl_content);
+            result = tpl.upd(data);
+            MessageBox.Show("修改成功，请等待审核！", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        #endregion
+
+        #region 模板类型修改
+        private void cbtpl_id_Type_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            btnUpdate_Type.IsEnabled = true;
+            string tpl_id = cbtpl_id_Type.SelectedItem.ToString();
+            tplInfo = tplSQL.Query(tpl_id);
+            if (tplInfo.Tpl_name == "")
             {
-                MessageBox.Show("请选择模板类型！");
-                return;
-            }
-            index = cbtpl_id.SelectedItem.ToString().Trim();
-            tplInfo.Tpl_id = int.Parse(index);
-            tplInfo.Tpl_name = cbtpl_name.SelectedIndex;
-            if (!TplSQL.Query(tplInfo).HasRows)
-            {
-                TplSQL.Insert(tplInfo);
+                cbtpl_name_Type.SelectedIndex = 0;
             }
             else
             {
-                TplSQL.Update(tplInfo);
+                cbtpl_name_Type.Text = tplInfo.Tpl_name;
             }
-            string tpl_content = txtContent.Text;
             data.Clear();
-            data.Add("tpl_id", index);
-            data.Add("tpl_content", tpl_content);
-            result = tpl.upd(data);
-            MessageBox.Show("修改成功，请等待审核！");
+            data.Add("tpl_id", tpl_id);
+            result = tpl.get(data);
+            string[] responseText = result.responseText.Split(',');
+            txtContent_Type.Text = responseText[1].Split('\"')[3];
         }
-
+        private void btnUpdate_Type_Click(object sender, RoutedEventArgs e)
+        {
+            if (cbtpl_name_Type.SelectedIndex == 0)
+            {
+                MessageBox.Show("请选择模板类型！", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+            tplInfo.Tpl_id = cbtpl_id_Type.Text;
+            tplInfo.Tpl_name = cbtpl_name_Type.Text;
+            if (tplSQL.Update(tplInfo) > 0)
+            {
+                MessageBox.Show("修改成功！","提示",MessageBoxButton.OK,MessageBoxImage.Information);
+            }
+            else
+            {
+                MessageBox.Show("修改失败，请重试！", "提示", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+        #endregion
+        
         private void btnAdd_Click(object sender, RoutedEventArgs e)
         {
             if (txtAddContent.Text == "")
             {
-                MessageBox.Show("请填写内容!");
+                MessageBox.Show("请填写内容!", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+            if (cbtpl_name_Add.SelectedIndex == 0)
+            {
+                MessageBox.Show("请选择模板内容!", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
             string tpl_content = txtAddContent.Text;
             data.Clear();
             data.Add("tpl_content", tpl_content);
             result = tpl.add(data);
-            if (result.success)
+            string[] responseText = result.responseText.Split(',');
+            tplInfo.Tpl_id = responseText[0].Split(':')[1];
+            tplInfo.Tpl_name = cbtpl_name_Add.Text;
+            tplSQL.Insert(tplInfo);
+            MessageBox.Show("添加成功，请等待审核！", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        #region 删除模板
+        private void cbtpl_id_Delete_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            btnDelete_Delete.IsEnabled = true;
+            string tpl_id = cbtpl_id_Delete.SelectedItem.ToString();
+            tplInfo = tplSQL.Query(tpl_id);
+            if (tplInfo.Tpl_name == "")
             {
-                MessageBox.Show("添加成功，请等待审核！");
+                cbtpl_name_Type.SelectedIndex = 0;
+            }
+            else
+            {
+                cbtpl_name_Type.Text = tplInfo.Tpl_name;
+            }
+            data.Clear();
+            data.Add("tpl_id", tpl_id);
+            result = tpl.get(data);
+            string[] responseText = result.responseText.Split(',');
+            txtContent_Delete.Text = responseText[1].Split('\"')[3];
+        }
+
+        private void btnDelete_Delete_Click(object sender, RoutedEventArgs e)
+        {
+            string tpl_id = cbtpl_id_Delete.SelectedItem.ToString();
+            if (MessageBox.Show("是否删除模板？", "提示", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+            {
+                data.Clear();
+                data.Add("tpl_id", tpl_id);
+                result = tpl.del(data);
+                tplSQL.Delete(tpl_id);
+                MessageBox.Show("删除成功！", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
+        #endregion
     }
 }
