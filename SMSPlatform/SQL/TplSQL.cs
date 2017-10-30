@@ -18,6 +18,7 @@ namespace SMSPlatform.SQL
         private const string UPDATE_Bir = "update Tpl set isCheck=@isCheck where tpl_id=@tpl_id";
         private const string SELECT = "select * from Tpl where tpl_id=@tpl_id";
         private const string SELECT_tpl_name = "select * from Tpl where tpl_name=@tpl_name";
+        private const string SELECT_isCheckID = "select tpl_id from Tpl where isCheck=@isCheck";
 
         public int Insert(TplInfo tplInfo)
         {
@@ -70,6 +71,24 @@ namespace SMSPlatform.SQL
                 }
             }
             return tplInfo;
+        }
+        public string QueryisCheckID(bool isCheck)
+        {
+            string tpl_id = null;
+            OleDbParameter[] parm = new OleDbParameter[] { 
+                  new OleDbParameter("@isCheck",isCheck)
+                };
+            using (OleDbDataReader read = SQLHelper.ExecuteReader(SELECT_isCheckID, parm))
+            {
+                if (read.HasRows)
+                {
+                    while (read.Read())
+                    {
+                        tpl_id = read["tpl_id"].ToString();
+                    }
+                }
+            }
+            return tpl_id;
         }
         public IList<TplInfo> QueryByTpl_name(string tpl_name)
         {

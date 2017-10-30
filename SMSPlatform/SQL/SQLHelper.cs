@@ -25,9 +25,9 @@ namespace SMSPlatform.SQL
                     conn.Open();
                     return conn;
                 }
-                catch(Exception ex)
+                catch(Exception)
                 {
-                    throw ex;
+                    throw;
                 }
             }
         }

@@ -52,7 +52,7 @@ namespace SMSPlatform.usercontrol
                     btn.Content = "选择模板";
                     btn.Click += btnSet_Click;
                     btn.Margin = new Thickness(0, 20, 0, 0);
-                    grid = commonControl.SetExpanderContent(list[i].Tpl_id, false);
+                    grid = commonControl.SetExpanderContent(list[i].Tpl_id, "生日祝福", false);
                     grid.Children.Add(btn);
                     Grid.SetRow(btn, 3);
                     epd.Content = grid;

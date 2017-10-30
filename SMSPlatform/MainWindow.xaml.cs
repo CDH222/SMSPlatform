@@ -29,10 +29,8 @@ namespace SMSPlatform
             InitializeComponent();
             icon();
         }
-        //Brush brush = new SolidColorBrush(Color.FromRgb(0, 0, 255));
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            //FestivalGreetingsSMS.Foreground = brush;
             WaitingWindow.Show(this);
             FestivalGreetingsSMS fgs = new FestivalGreetingsSMS();
             mainShow.Children.Clear();
@@ -41,7 +39,6 @@ namespace SMSPlatform
 
         private void btnNoticeSMS_Click(object sender, RoutedEventArgs e)
         {
-            //NoticeSMS.Foreground = brush;
             WaitingWindow.Show(this);
             NoticeSMS ns = new NoticeSMS();
             mainShow.Children.Clear();
@@ -50,7 +47,6 @@ namespace SMSPlatform
 
         private void btnFestivalGreetingsSMS_Click(object sender, RoutedEventArgs e)
         {
-            //FestivalGreetingsSMS.Foreground = brush;
             WaitingWindow.Show(this);
             FestivalGreetingsSMS fgs = new FestivalGreetingsSMS();
             mainShow.Children.Clear();
@@ -59,7 +55,6 @@ namespace SMSPlatform
 
         private void btnBirthdayBlessingSMS_Click(object sender, RoutedEventArgs e)
         {
-            //BirthdayBlessingSMS.Foreground = brush;
             WaitingWindow.Show(this);
             BirthdayBlessingSMS bbs = new BirthdayBlessingSMS();
             mainShow.Children.Clear();
@@ -68,7 +63,6 @@ namespace SMSPlatform
         
         private void btnTemplateManager_Click(object sender, RoutedEventArgs e)
         {
-            //TemplateManager.Foreground = brush;
             WaitingWindow.Show(this);
             TemplateManager tm = new TemplateManager();
             mainShow.Children.Clear();
@@ -77,7 +71,6 @@ namespace SMSPlatform
 
         private void btnImportData_Click(object sender, RoutedEventArgs e)
         {
-            //ImportData.Foreground = brush;
             WaitingWindow.Show(this);
             ImportData id = new ImportData();
             mainShow.Children.Clear();

@@ -16,7 +16,6 @@ namespace SMSPlatform
     /// </summary>
     public partial class App : Application
     {
-        Mutex mutex;
         public App()
         {
             this.Startup += new StartupEventHandler(App_Startup);
@@ -24,7 +23,7 @@ namespace SMSPlatform
         void App_Startup(object sender, StartupEventArgs e)
         {
             bool ret;
-            mutex = new Mutex(true, "ElectronicNeedleTherapySystem", out ret);
+            Mutex mutex = new Mutex(true, "ElectronicNeedleTherapySystem", out ret);
             if (!ret)
             {
                 MessageBox.Show("程序已在运行！");
@@ -41,17 +40,17 @@ namespace SMSPlatform
                 timer.Start();
                 timer.Elapsed += new System.Timers.ElapsedEventHandler(Timer1_Elapsed);
             }
+            mutex.Dispose();
         }
         static void Timer1_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
+            int hour = int.Parse(ConfigurationManager.AppSettings["hour"]);
+            int minute = int.Parse(ConfigurationManager.AppSettings["minute"]);
             // 得到 hour minute second  如果等于某个值就开始执行某个程序。
             int intHour = e.SignalTime.Hour;
             int intMinute = e.SignalTime.Minute;
-            // 定制时间
-            int iHour = 3;
-            int iMinute = 30;
-            //设置每天3：30开始执行
-            if (intHour == iHour && intMinute == iMinute)
+            //每天执行时间
+            if (intHour == hour && intMinute == minute)
             {
                 SendBirthdaySMS sbs = new SendBirthdaySMS();
                 sbs.Send();

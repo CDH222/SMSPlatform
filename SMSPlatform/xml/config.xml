@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<config>
+  <variables>
+    <variable name="节日祝福">
+      <name>姓名</name>
+      <sender>发送者</sender>
+      <festival>节日</festival>
+      <greeting>祝福语</greeting>
+    </variable>
+    <variable name="开会通知">
+      <sender>发送者</sender>
+      <date>日期</date>
+      <time>时间</time>
+      <place>地点</place>
+      <meeting_name>会议名称</meeting_name>
+    </variable>
+    <variable name="生日祝福">
+      <name>姓名</name>
+    </variable>
+  </variables>
+</config>

@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Xml;
 using Yunpian.lib;
 using Yunpian.model;
 
@@ -59,6 +60,7 @@ namespace SMSPlatform.usercontrol
                 cbtpl_id_Type.Items.Add(tpl_id);
                 cbtpl_id_Delete.Items.Add(tpl_id);
             }
+            GetVariable();
         }
 
         #region 模板修改
@@ -192,5 +194,27 @@ namespace SMSPlatform.usercontrol
             }
         }
         #endregion
+
+        void GetVariable()
+        {
+            string attribute, name, innerText, text = null;
+            XmlDocument doc = new XmlDocument();
+            doc.Load("xml/config.xml");
+            XmlNodeList nodes = doc.SelectNodes("/config/variables/variable");
+            foreach (XmlNode node in nodes)
+            {
+                attribute = node.Attributes["name"].Value;
+                text += attribute + "：" + "\n    ";
+                foreach (XmlNode item in node)
+                {
+                    name = item.Name;
+                    innerText = item.InnerText;
+                    text += innerText + "：" + name + "    ";
+                }
+                text += "\n";
+            }
+            tbaddVariable.Text = text;
+            tbUpdateVariable.Text = text;
+        }
     }
 }

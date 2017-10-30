@@ -65,7 +65,7 @@ namespace SMSPlatform.usercontrol
                     btnSend.Click += btnSend_Click;
                     btnSend.Margin = new Thickness(200, 20, 0, 0);
 
-                    grid = commonControl.SetExpanderContent(list[i].Tpl_id, true);
+                    grid = commonControl.SetExpanderContent(list[i].Tpl_id, "节日祝福", true);
                     grid.Children.Add(btnPreview);
                     grid.Children.Add(btnSend);
                     Grid.SetRow(btnPreview, 3);

@@ -97,7 +97,7 @@ namespace SMSPlatform.usercontrol
                         btnSend.Click += btnSend_Click;
                         btnSend.Margin = new Thickness(200, 20, 0, 0);
 
-                        grid = commonControl.SetExpanderContent(tplInfolist[i].Tpl_id, true);
+                        grid = commonControl.SetExpanderContent(tplInfolist[i].Tpl_id, "开会通知", true);
                         grid.Children.Add(btnPreview);
                         grid.Children.Add(btnSend);
                         Grid.SetRow(btnPreview, 3);

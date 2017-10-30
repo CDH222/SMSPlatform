@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Xml;
 using Yunpian.lib;
 using Yunpian.model;
 
@@ -63,7 +64,7 @@ namespace SMSPlatform.usercontrol
         /// <param name="tpl_id"></param>
         /// <param name="isShow">是否显示变量输入框</param>
         /// <returns></returns>
-        public Grid SetExpanderContent(string tpl_id,bool isShow)
+        public Grid SetExpanderContent(string tpl_id,string name, bool isShow)
         {
             TextBlock tbID = new TextBlock();
             TextBox txt = new TextBox();
@@ -112,7 +113,7 @@ namespace SMSPlatform.usercontrol
                     TextBlock tb = new TextBlock();
                     TextBox txtb = new TextBox();
 
-                    tb.Text = GetVariable(content, i) + "：  ";
+                    tb.Text = GetVariable(content, name, i) + "：  ";
                     tb.FontSize = 16;
                     tb.Foreground = brush;
                     tb.VerticalAlignment = VerticalAlignment.Center;
@@ -185,18 +186,34 @@ namespace SMSPlatform.usercontrol
         /// <summary>
         /// 获取变量名
         /// </summary>
-        private string GetVariable(string content, int i)
+        private string GetVariable(string content,string name, int i)
         {
-            string result = null;
+            string match, result = null;
+            XmlDocument doc = new XmlDocument();
+            doc.Load("xml/config.xml");
+            XmlNodeList nodes = doc.SelectNodes("/config/variables/variable[@name='" + name + "']");
+            
             Regex regex = new Regex("#.*?#"); // 定义一个Regex对象实例
             MatchCollection Matches = Regex.Matches(content, regex.ToString(), RegexOptions.ExplicitCapture);
-            result = Matches[i - 1].Value;
+            match = Matches[i - 1].Value.Replace('#', ' ');
+
+            foreach (XmlNode node in nodes)
+            {
+                if (node.SelectSingleNode(match).InnerText != null)
+                {
+                    result = node.SelectSingleNode(match).InnerText;
+                }
+                else
+                {
+                    result = match;
+                }
+            }
             return result;
         }
         /// <summary>
         /// 获取模板信息
         /// </summary>
-        private string GetTplContent(string tpl_id)
+        public string GetTplContent(string tpl_id)
         {
             TplOperator tpl = new TplOperator(YunpianConfig.GetConfig());
             Dictionary<string, string> data = new Dictionary<string, string>();

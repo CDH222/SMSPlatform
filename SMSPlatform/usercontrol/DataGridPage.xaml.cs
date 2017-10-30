@@ -89,6 +89,7 @@ namespace SMSPlatform.usercontrol
                 }
                 this.dataGrid.ItemsSource = tmpTable.DefaultView;
                 tmpTable.Dispose();
+                _dt.Dispose();
             }
             catch
             {
