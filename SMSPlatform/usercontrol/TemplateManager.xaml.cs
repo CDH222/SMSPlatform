@@ -54,6 +54,7 @@ namespace SMSPlatform.usercontrol
                 {
                     tplInfo.Tpl_id = tpl_id;
                     tplInfo.Tpl_name = "";
+                    tplInfo.IsCheck = false;
                     tplSQL.Insert(tplInfo);
                 }
                 cbtpl_id.Items.Add(tpl_id);

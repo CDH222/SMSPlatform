@@ -141,7 +141,7 @@ namespace SMSPlatform
             //隐藏任务栏区图标
             this.ShowInTaskbar = false;
             this.notifyIcon.Visible = true;
-            this.notifyIcon.ShowBalloonTip(1000);
+            this.notifyIcon.ShowBalloonTip(500);
         }
     }
 }

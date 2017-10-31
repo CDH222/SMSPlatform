@@ -16,6 +16,7 @@ namespace SMSPlatform
     /// </summary>
     public partial class App : Application
     {
+        Mutex mutex;
         public App()
         {
             this.Startup += new StartupEventHandler(App_Startup);
@@ -23,11 +24,12 @@ namespace SMSPlatform
         void App_Startup(object sender, StartupEventArgs e)
         {
             bool ret;
-            Mutex mutex = new Mutex(true, "ElectronicNeedleTherapySystem", out ret);
+            mutex = new Mutex(true, "ElectronicNeedleTherapySystem", out ret);
             if (!ret)
             {
-                MessageBox.Show("程序已在运行！");
+                MessageBox.Show("程序已在运行！", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
                 Environment.Exit(0);
+                mutex.Close();
             }
             else
             {
@@ -40,7 +42,6 @@ namespace SMSPlatform
                 timer.Start();
                 timer.Elapsed += new System.Timers.ElapsedEventHandler(Timer1_Elapsed);
             }
-            mutex.Dispose();
         }
         static void Timer1_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {

@@ -12,7 +12,7 @@ namespace SMSPlatform.SQL
 {
     public class TplSQL
     {
-        private const string INSERT = "insert into Tpl (tpl_id,tpl_name) values (@tpl_id,@tpl_name)";
+        private const string INSERT = "insert into Tpl(tpl_id,tpl_name,isCheck) values(@tpl_id,@tpl_name,@isCheck)";
         private const string DELETE = "delete from Tpl where tpl_id=@tpl_id";
         private const string UPDATE = "update Tpl set tpl_name=@tpl_name where tpl_id=@tpl_id";
         private const string UPDATE_Bir = "update Tpl set isCheck=@isCheck where tpl_id=@tpl_id";
@@ -24,7 +24,8 @@ namespace SMSPlatform.SQL
         {
             OleDbParameter[] parm = new OleDbParameter[] { 
                   new OleDbParameter("@tpl_id",tplInfo.Tpl_id),
-                  new OleDbParameter("@tpl_name",tplInfo.Tpl_name)
+                  new OleDbParameter("@tpl_name",tplInfo.Tpl_name),
+                  new OleDbParameter("@isCheck",tplInfo.IsCheck)
                 };
             return SQLHelper.ExecuteNonQuery(INSERT, parm);
         }

@@ -30,9 +30,9 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="50,0,0,0" VerticalAlignment="Center">
                     <Button Content="转到" Width="60" Height="23" Name="btnGo" Click="btnGo_Click"/>
-                    <TextBlock Style="{StaticResource PageTextBlock1}" Text="第" Margin="10,0,0,0"/>
+                    <TextBlock Style="{StaticResource PageTextBlock1}" Foreground="#01544A" Text="第" Margin="10,0,0,0"/>
                     <TextBox Name="txtCurrentPage" FontSize="13" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="30" Margin="10,0,0,0"/>
-                    <TextBlock Style="{StaticResource PageTextBlock1}" Text="页" Margin="10,0,0,0"/>
+                    <TextBlock Style="{StaticResource PageTextBlock1}" Foreground="#01544A" Text="页" Margin="10,0,0,0"/>
                 </StackPanel>
             </StackPanel>
         </Border>

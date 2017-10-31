@@ -15,7 +15,7 @@ namespace SMSPlatform.SQL
         private const string INSERT = "insert into TeacherInfo(WorkID,DepartmentName,RealName,IDNumber,Phone,Pro_Title,[Position]) values (@WorkID,@DepartmentName,@RealName,@IDNumber,@Phone,@Pro_Title,@Position)";
         private const string DELETE = "delete from TeacherInfo where WorkID=@WorkID";
         private const string UPDATE = "update TeacherInfo set DepartmentName=@DepartmentName,RealName=@RealName,IDNumber=@IDNumber,Phone=@Phone,Pro_Title=@Pro_Title,[Position]=@Position where WorkID=@WorkID";
-        private const string SELECTALL = "select * from TeacherInfo";
+        private const string SELECTALL = "select * from TeacherInfo where 1=1";
         private const string SELECTByBirthday = "select RealName,Phone from TeacherInfo where mid(IDNumber, 11, 4) = @DateTime";
         private const string SELECT_Pro_TitleorPosition = "select distinct Pro_Title,[Position] from TeacherInfo";
 
@@ -95,9 +95,20 @@ namespace SMSPlatform.SQL
             return list;
         }
 
-        public DataTable QueryAll_DataTable()
+        public DataTable Query_DataTable(TeacherInfo teacherInfo)
         {
-            return SQLHelper.ExecuteDataTable(SELECTALL);
+            StringBuilder sb = new StringBuilder();
+            sb.Clear();
+            sb.Append(SELECTALL);
+            if (teacherInfo.WorkID != null && teacherInfo.WorkID != "")
+            {
+                sb.AppendFormat(" and WorkID='{0}'", teacherInfo.WorkID);
+            }
+            if (teacherInfo.RealName != null && teacherInfo.RealName != "")
+            {
+                sb.AppendFormat(" and RealName='{0}'", teacherInfo.RealName);
+            }
+            return SQLHelper.ExecuteDataTable(sb.ToString());
         }
 
         public IList<TeacherInfo> QueryByWorkIDandRealName(TeacherInfo teacherInfo)

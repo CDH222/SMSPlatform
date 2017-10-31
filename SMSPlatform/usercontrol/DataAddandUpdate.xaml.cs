@@ -27,7 +27,6 @@ namespace SMSPlatform.usercontrol
         {
             InitializeComponent();
         }
-        TeacherInfo teacherInfo = new TeacherInfo();
         TeacherSQL teacherSQL = new TeacherSQL();
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -85,6 +84,7 @@ namespace SMSPlatform.usercontrol
 
         public void Load(string workID)
         {
+            TeacherInfo teacherInfo = new TeacherInfo();
             teacherInfo.WorkID = workID;
             IList<TeacherInfo> list = teacherSQL.QueryByWorkIDandRealName(teacherInfo);
             if (list.Count > 0)

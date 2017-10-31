@@ -30,54 +30,58 @@ namespace SMSPlatform.usercontrol
         {
             InitializeComponent();
         }
-        TeacherInfo teacherInfo = new TeacherInfo();
+        TeacherInfo teacherInfo;
         TeacherSQL teacherSQL = new TeacherSQL();
         DataTable table = new DataTable();
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            DataLoade(teacherSQL.QueryAll_DataTable());
+            teacherInfo = new TeacherInfo();
+            DataLoade(teacherSQL.Query_DataTable(teacherInfo));
         }
 
         private void btnQuery(object sender, RoutedEventArgs e)
         {
-            IList<TeacherInfo> list = new List<TeacherInfo>();
-            
+            teacherInfo = new TeacherInfo();
             if (cbCondition.SelectedIndex == 0)
             {
                 MessageBox.Show("请选择查询类型！","提示",MessageBoxButton.OK,MessageBoxImage.Information);
                 return;
             }
-            if (cbCondition.SelectedIndex == 1)
+            switch (cbCondition.SelectedIndex)
             {
-                teacherInfo.WorkID = txtCondition.Text;
-                list = teacherSQL.QueryByWorkIDandRealName(teacherInfo);
-                ToDataTableTow(list);
-                DataLoade(table);
-            }
-            if (cbCondition.SelectedIndex == 2)
-            {
-                teacherInfo.RealName = txtCondition.Text;
-                list = teacherSQL.QueryByWorkIDandRealName(teacherInfo);
-                ToDataTableTow(list);
-                DataLoade(table);
+                case 1:
+                    teacherInfo.WorkID = txtCondition.Text;
+                    table = teacherSQL.Query_DataTable(teacherInfo);
+                    DataLoade(table);
+                    break;
+                case 2:
+                    teacherInfo.RealName = txtCondition.Text;
+                    table = teacherSQL.Query_DataTable(teacherInfo);
+                    DataLoade(table);
+                    break;
+                default:
+                    DataLoade(table);
+                    break;
             }
             table.Dispose();
         }
 
         private void btnAdd(object sender, RoutedEventArgs e)
         {
+            teacherInfo = new TeacherInfo();
             DataAddandUpdate dau = new DataAddandUpdate();
             dau.Title = "数据添加";
             Uri iconUri = new Uri("images/add.ico", UriKind.Relative);
             dau.Icon = BitmapFrame.Create(iconUri);
             dau.isAdd = true;
             dau.ShowDialog();
-            DataLoade(teacherSQL.QueryAll_DataTable());
+            DataLoade(teacherSQL.Query_DataTable(teacherInfo));
         }
 
         private void btnUpdate(object sender, RoutedEventArgs e)
         {
+            teacherInfo = new TeacherInfo();
             DataRowView b = (DataRowView)grid1.SelectedItem;
             if (b == null)
             {
@@ -92,10 +96,11 @@ namespace SMSPlatform.usercontrol
             dau.isAdd = false;
             dau.Load(workID);
             dau.ShowDialog();
-            DataLoade(teacherSQL.QueryAll_DataTable());
+            DataLoade(teacherSQL.Query_DataTable(teacherInfo));
         }
         private void btnDelete(object sender, RoutedEventArgs e)
         {
+            teacherInfo = new TeacherInfo();
             DataRowView b = (DataRowView)grid1.SelectedItem;
             if (b == null)
             {
@@ -108,7 +113,7 @@ namespace SMSPlatform.usercontrol
                 if (teacherSQL.Delete(workID) > 0)
                 {
                     MessageBox.Show("删除成功！", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
-                    DataLoade(teacherSQL.QueryAll_DataTable());
+                    DataLoade(teacherSQL.Query_DataTable(teacherInfo));
                 }
                 else
                 {
@@ -118,16 +123,18 @@ namespace SMSPlatform.usercontrol
         }
         private void btnInto(object sender, RoutedEventArgs e)
         {
+            teacherInfo = new TeacherInfo();
             ProgressBar pb = new ProgressBar();
             HwndSource winformWindow = HwndSource.FromDependencyObject(this) as HwndSource;
             new WindowInteropHelper(pb) { Owner = winformWindow.Handle };
             pb.ShowDialog();
-            DataLoade(teacherSQL.QueryAll_DataTable());
+            DataLoade(teacherSQL.Query_DataTable(teacherInfo));
         }
 
         private void btnRefresh(object sender, RoutedEventArgs e)
         {
-            DataLoade(teacherSQL.QueryAll_DataTable());
+            teacherInfo = new TeacherInfo();
+            DataLoade(teacherSQL.Query_DataTable(teacherInfo));
         }
         //加载
         public void DataLoade(DataTable table)
@@ -135,29 +142,6 @@ namespace SMSPlatform.usercontrol
             grid1.RowHeight = 25;
             grid1.ItemsSource = null;
             gridpage.ShowPages(grid1, table, 30);
-        }
-        void ToDataTableTow(IList<TeacherInfo> list)
-        {
-            table.Reset();
-            table.Columns.Add("DepartmentName");
-            table.Columns.Add("WorkID");
-            table.Columns.Add("RealName");
-            table.Columns.Add("IDNumber");
-            table.Columns.Add("Phone");
-            table.Columns.Add("Position");
-            table.Columns.Add("Pro_Title");
-            foreach (var info in list)
-            {
-                DataRow dr = table.NewRow();
-                dr["DepartmentName"] = info.DepartmentName;
-                dr["WorkID"] = info.WorkID;
-                dr["RealName"] = info.RealName;
-                dr["IDNumber"] = info.IDNumber;
-                dr["Phone"] = info.Phone;
-                dr["Position"] = info.Position;
-                dr["Pro_Title"] = info.Pro_Title;
-                table.Rows.Add(dr);
-            }
         }
     }
 }
